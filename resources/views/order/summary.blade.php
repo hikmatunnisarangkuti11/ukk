@@ -24,7 +24,7 @@
                         @endphp
                         <tr>
                             <td>{{ $item['name'] }}</td>
-                            <td>{{ $item['quantity'] }}</td>
+                            <td>{{ $item['quantity'] }} KG</td>
                             <td>Rp{{ number_format($item['price'], 0, ',', '.') }}</td>
                             <td>Rp{{ number_format($subtotal, 0, ',', '.') }}</td>
                         </tr>

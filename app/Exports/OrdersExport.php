@@ -16,7 +16,7 @@ class OrdersExport implements FromCollection, WithHeadings
         return Order::all()->map(function ($order) {
             return [
                 'invoice'        => $order->invoice,
-                'customer_name'  => $order->customer_name,
+                'customer_name' => $order->customer_name ?? 'Bukan Member',
                 'products'       => collect(json_decode($order->products))->map(function($product) {
                     return [
                         $product->name,
@@ -25,7 +25,6 @@ class OrdersExport implements FromCollection, WithHeadings
                     ];
                 })->toArray(),
                 'total'          => $order->total,
-                'quantity'       => $order->quantity,
                 'phone_number'   => $order->phone_number,
                 'status'         => $order->status,
                 'kembalian'      => $order->kembalian,
@@ -43,7 +42,6 @@ class OrdersExport implements FromCollection, WithHeadings
             'Nama Customer',
             'Produk',
             'Total',
-            'Kuantitas',
             'No. HP',
             'Status',
             'Kembalian',

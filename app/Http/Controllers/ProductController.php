@@ -19,7 +19,7 @@ class ProductController extends Controller
             ->orWhere('stock', 'like', "%{$search}%");
         }
 
-        $products = $query->paginate(5);
+        $products = $query->paginate(10);
         return view('products.index', compact('products'));
     }
 

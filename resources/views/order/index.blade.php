@@ -28,11 +28,10 @@
 
             @if (Auth::user()->role != 'Admin')
                 <a href="{{ route('orders.create') }}" class="btn btn-primary">
-                    Tambah Pembelian
+                    Tambah Penjualan
                 </a>
             @endif
         </div>
-
 
         <table class="table table-bordered">
             <thead>
@@ -59,7 +58,7 @@
                                 Lihat
                             </button>
 
-                            <!-- Modal Content -->
+                            <!-- Modal Content - Detail Order -->
                             <div class="modal fade" id="orderDetailModal{{ $order->id }}" tabindex="-1"
                                 aria-labelledby="orderDetailModalLabel{{ $order->id }}" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
@@ -68,6 +67,14 @@
                                             <h5 class="modal-title" id="orderDetailModalLabel{{ $order->id }}">Detail Order</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Tutup"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            @php
+                                                $toko = \App\Models\Toko::first();  // Ambil data toko pertama
+                                            @endphp
+                                            <p><strong>Nama Toko:</strong> {{ $toko->nama_toko }}</p>
+                                            <p><strong>Alamat:</strong> {{ $toko->alamat }}</p>
+                                            <p><strong>No. HP:</strong> {{ $toko->no_hp }}</p>
                                         </div>
                                         <div class="modal-body">
                                             @php
@@ -98,7 +105,7 @@
                                                     @foreach ($products as $product)
                                                         <tr>
                                                             <td>{{ $product['name'] }}</td>
-                                                            <td>{{ $product['quantity'] }}</td>
+                                                            <td>{{ $product['quantity'] }} KG </td>
                                                             <td>Rp. {{ number_format($product['price'], 0, ',', '.') }}</td>
                                                             <td>Rp. {{ number_format($product['subtotal'], 0, ',', '.') }}</td>
                                                         </tr>
@@ -109,6 +116,23 @@
                                             <p><strong>Total:</strong> Rp. {{ number_format($order->total, 0, ',', '.') }}</p>
                                             <p><strong>Dibuat pada:</strong> {{ $order->created_at->format('Y-m-d H:i:s') }}</p>
                                             <p><strong>Oleh:</strong> {{ $order->user_id == 1 ? 'Admin' : 'Petugas' }}</p>
+
+                                            <!-- Modal Content - Info Toko -->
+                                            @php
+                                                $toko = \App\Models\Toko::first();  // Ambil data toko pertama
+                                            @endphp
+                                            <div class="modal mt-3">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Informasi Toko</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Tutup"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><strong>Nama Toko:</strong> {{ $toko->nama_toko }}</p>
+                                                    <p><strong>Alamat:</strong> {{ $toko->alamat }}</p>
+                                                    <p><strong>No. HP:</strong> {{ $toko->no_hp }}</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

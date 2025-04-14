@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Toko;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -13,6 +14,7 @@ class DashboardController extends Controller
         $now = Carbon::now();
         $currentMonth = $now->month;
         $currentYear = $now->year;
+        $toko = Toko::first();
 
         $orders = Order::whereMonth('created_at', $currentMonth)
             ->whereYear('created_at', $currentYear)
@@ -38,11 +40,13 @@ class DashboardController extends Controller
             'days' => $days,
             'totals' => $totals,
             'products' => $products,
+            'toko' => $toko,
         ]);
     }
     public function employeeDashboard()
     {
         $today = Carbon::today();
+        $toko = Toko::first();
 
         $ordersToday = Order::whereDate('created_at', $today)->get();
 
@@ -56,6 +60,7 @@ class DashboardController extends Controller
             'totalHariIni' => $totalHariIni,
             'jumlahTransaksi' => $jumlahTransaksiHariIni,
             'lastUpdated' => now()->format('d M Y H:i'),
+            'toko' => $toko,
         ]);
     }
 

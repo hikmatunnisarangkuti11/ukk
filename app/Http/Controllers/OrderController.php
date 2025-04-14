@@ -6,11 +6,11 @@ use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Member;
+use App\Models\Toko;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\OrdersExport;
 use Barryvdh\DomPDF\Facade\Pdf;
-
 class OrderController extends Controller
 {
     public function downloadPDF($id)
@@ -18,7 +18,8 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
         $orderData = json_decode($order->products, true);
         $member = Member::where('phone', $order->phone_number)->first();
-
+        $toko = Toko::first();
+        
         $paymentDetails = [
             'order'           => $order,
             'kasir'           => Auth::user()->role === 'Employee' ? 'Petugas' : Auth::user()->role,
@@ -35,6 +36,7 @@ class OrderController extends Controller
             'poin_digunakan'  => $order->poin_digunakan,
             'poin_didapat'    => floor($order->total * 0.01),
             'total_pay'       => $order->total + $order->kembalian,
+            'toko' => $toko,
         ];
 
         $pdf = Pdf::loadView('order.pdf', compact('paymentDetails'))
@@ -106,16 +108,19 @@ class OrderController extends Controller
         return view('order.member', compact('orderData', 'statusMember', 'nomorTelepon', 'jumlahBayar', 'namaPengguna', 'poinSaatIni', 'countSale'));
     }
 
+
     public function detailPembayaran(Request $request)
     {
         $orderData = json_decode($request->order_data, true);
         $statusMember = $request->is_member;
-        $totalPrice = $request->total_price;
-        $totalPaid = $request->total_pay_hidden;
+        $totalPrice = (int) $request->total_price;
+        $totalPaid = (int) $request->total_pay_hidden;
         $customerName = $request->customer_name_input;
         $phone = $request->phone;
 
         $member = null;
+
+        // Cek apakah pembeli adalah member
         if ($statusMember === 'member') {
             $member = Member::firstOrCreate(
                 ['phone' => $phone],
@@ -125,6 +130,8 @@ class OrderController extends Controller
                     'is_member' => 1,
                 ]
             );
+
+            // Update nama customer jika berubah
             $member->update(['customer_name' => $customerName]);
         }
 
@@ -133,26 +140,27 @@ class OrderController extends Controller
         $poinTotalDigunakan = 0;
         $totalSetelahPoin = $totalPrice;
 
+        // Proses poin jika member
         if ($member) {
             $totalPoinTersedia = $member->points + $poinDariPembelian;
             $poinDigunakan = min($totalPoinTersedia, $poinDigunakan);
 
             if ($poinDigunakan > 0) {
                 $totalSetelahPoin = $totalPrice - $poinDigunakan;
-
                 $member->decrement('points', min($member->points, $poinDigunakan));
-
                 $poinTotalDigunakan = $poinDigunakan;
-                $poinDariPembelian = 0;
+                $poinDariPembelian = 0; // tidak dapat poin dari pembelian karena pakai poin
             } else {
                 $member->increment('points', $poinDariPembelian);
             }
         }
 
+        // Generate invoice
         $lastInvoiceNumber = Order::max('invoice');
         $lastInvoiceNumber = (int) filter_var($lastInvoiceNumber, FILTER_SANITIZE_NUMBER_INT);
         $nextInvoiceNumber = $lastInvoiceNumber + 1;
 
+        // Simpan order
         $order = Order::create([
             'user_id' => Auth::id(),
             'customer_name' => $customerName,
@@ -165,12 +173,15 @@ class OrderController extends Controller
             'poin_digunakan' => $poinTotalDigunakan,
         ]);
 
+        // Kurangi stok produk
         foreach ($orderData as $item) {
             $product = Product::find($item['id']);
             if ($product) {
-                $product->decrement('stock', (int)$item['quantity']);
+                $product->decrement('stock', (int) $item['quantity']);
             }
         }
+
+        $toko = Toko::first();
 
         return view('order.detail-pembayaran', [
             'paymentDetails' => [
@@ -189,9 +200,11 @@ class OrderController extends Controller
                 'poin_digunakan' => $poinTotalDigunakan,
                 'poin_didapat' => $poinDariPembelian,
                 'total_pay' => $totalPaid,
-            ]
+                'toko' => $toko,
+            ],
         ]);
     }
+
 
     public function create()
     {

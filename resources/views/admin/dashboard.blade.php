@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-    <h3 class="text-xl font-bold mb-4">Dashboard</h3>
 
-    <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
-        <div class="bg-white p-4 shadow rounded-2xl">
+<div class="grid grid-cols-1 md:grid-cols-1 gap-6">
+    <div class="bg-white p-4 shadow rounded-2xl">
+            <h2 class="text-center">Selamat Datang, di {{ $toko->nama_toko }}!</h2>
+            <br>
             <h4 class="font-semibold mb-2">Product Stocks</h4>
             <div class="w-full h-48">
                 <canvas id="productChart" class="w-full h-full"></canvas>

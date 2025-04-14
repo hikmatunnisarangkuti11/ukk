@@ -4,6 +4,12 @@
 
     <div class="receipt">
         <h2>Nota Pembayaran</h2>
+        <div class="store-info text-center mb-4">
+            <h3>{{ $paymentDetails['toko']->nama_toko }}</h3>
+            <p>{{ $paymentDetails['toko']->alamat }}</p>
+            <p>No. HP: {{ $paymentDetails['toko']->no_hp }}</p>
+        </div>
+
 
         <div class="section">
             <p><strong>Invoice:</strong> {{ $paymentDetails['invoice'] }}</p>
@@ -32,7 +38,7 @@
                         <tr>
                             <td>{{ $product['name'] }}</td>
                             <td style="text-align:right">Rp {{ number_format($product['price'], 0, ',', '.') }}</td>
-                            <td style="text-align:right">{{ $product['quantity'] }}</td>
+                            <td style="text-align:right">{{ $product['quantity'] }}kg</td>
                             <td style="text-align:right">Rp {{ number_format($product['subtotal'], 0, ',', '.') }}</td>
                         </tr>
                     @endforeach

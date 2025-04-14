@@ -24,7 +24,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{ route('orders.index') }}">
                         <i class="ti ti-shopping-cart"></i> <span
-                            class="hide-menu">Pembelian</span>
+                            class="hide-menu">Penjualan</span>
                         </a>
                     </li>
                 @if (Auth::user()->role == 'Admin')

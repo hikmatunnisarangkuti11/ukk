@@ -11,7 +11,7 @@
                         <div class="card-body">
                             <img src="{{ asset('storage/products/' . $product->image) }}" alt="Image" width="300">
                             <h5 class="card-title">{{ $product->name }}</h5>
-                            <p class="card-text">Stock: {{ $product->stock }}</p>
+                            <p class="card-text">Stock: {{ $product->stock }} KG</p>
                             <p class="card-text">Harga: Rp{{ number_format($product->price, 0, ',', '.') }}</p>
 
                             <div class="d-flex align-items-center">

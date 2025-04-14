@@ -51,7 +51,7 @@
                             </td>
                             <td>{{ $product->name }}</td>
                             <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
-                            <td>{{ $product->stock }}</td>
+                            <td>{{ $product->stock }} KG</td>
                             @if (Auth::user()->role == 'Admin')
                                 <td>
                                     <a href="{{ route('products.edit', $product->id) }}"
@@ -106,7 +106,7 @@
                 </tbody>
             </table>
 
-            {{ $products->links('pagination::bootstrap-5') }}
+            {{-- {{ $products->links('pagination::bootstrap-5') }} --}}
         </div>
     </div>
 @endsection

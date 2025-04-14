@@ -19,7 +19,7 @@
                 <input type="number" name="price" class="form-control" required>
             </div>
             <div class="mb-3">
-                <label class="form-label">Stok</label>
+                <label class="form-label">Stok / KG</label>
                 <input type="number" name="stock" class="form-control" required>
             </div>
             <div class="mb-3">
