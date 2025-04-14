@@ -4,7 +4,7 @@
 
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
     <div class="bg-white p-4 shadow rounded-2xl">
-            <h2 class="text-center">Selamat Datang, di {{ $toko->nama_toko }}!</h2>
+            <h2 class="text-center">Selamat Datang, Di {{ $toko->nama_toko }}!</h2>
             <br>
             <h4 class="font-semibold mb-2">Product Stocks</h4>
             <div class="w-full h-48">
