@@ -17,4 +17,5 @@ class Order extends Model
     {
         return $this->belongsTo(Member::class);
     }
+    
 }

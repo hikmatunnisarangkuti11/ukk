@@ -107,14 +107,14 @@
             </tbody>
         </table>
 
-        <div class="line"></div>
-
         <div class="section">
-            <p><strong>Total Pembayaran:</strong> Rp {{ number_format($paymentDetails['total_pay'], 0, ',', '.') }}</p>
+            <p ><strong>Total Pembayaran:</strong> Rp {{ number_format($paymentDetails['total_pay'], 0, ',', '.') }}</p>
             <p><strong>Poin Digunakan:</strong> {{ number_format($paymentDetails['poin_digunakan'], 0, ',', '.') }}</p>
             <p><strong>Total Harga:</strong> Rp {{ number_format($paymentDetails['total_asli'] - $paymentDetails['poin_digunakan'], 0, ',', '.') }}</p>
             <p><strong>Kembalian:</strong> Rp {{ number_format($paymentDetails['kembalian'], 0, ',', '.') }}</p>
         </div>
+        <div class="line"></div>
+
 
         <div class="text-center mt-3">
             <p>--- Terima Kasih ---</p>

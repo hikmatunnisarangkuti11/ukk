@@ -17,7 +17,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Beras',
                 'price' => 10000,
-                'stock' => 50,
+                'stock' => 5,
                 'image' => 'beras.png',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -25,7 +25,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Cabai',
                 'price' => 30000,
-                'stock' => 50,
+                'stock' => 5,
                 'image' => 'cabai.png',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -33,7 +33,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Daging',
                 'price' => 100000,
-                'stock' => 50,
+                'stock' => 5,
                 'image' => 'daging.png',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -41,7 +41,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Jagung',
                 'price' => 10000,
-                'stock' => 50,
+                'stock' => 5,
                 'image' => 'jagung.png',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -49,7 +49,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Kedelai',
                 'price' => 10000,
-                'stock' => 50,
+                'stock' => 5,
                 'image' => 'kedelai.png',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -57,7 +57,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Telur',
                 'price' => 30000,
-                'stock' => 50,
+                'stock' => 5,
                 'image' => 'telur.png',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
