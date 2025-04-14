@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="text-center mt-5">
-        <h2>Selamat Datang, Petugas di {{ $toko->nama_toko }}!</h2>
+        <h2>Selamat Datang, Di {{ $toko->nama_toko }}!</h2>
         <div class="card p-4 mb-4 mx-auto" style="max-width: 1000px; background-color: #f8f9fa; margin-top: 100px;">
             <h3 class="fw-bold mb-3">Total Penjualan Hari Ini</h3>
             <h1 class="display-4 fw-bold">{{ $jumlahTransaksi }}</h1>
