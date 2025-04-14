@@ -19,7 +19,7 @@ class OrderController extends Controller
         $orderData = json_decode($order->products, true);
         $member = Member::where('phone', $order->phone_number)->first();
         $toko = Toko::first();
-        
+
         $paymentDetails = [
             'order'           => $order,
             'kasir'           => Auth::user()->role === 'Employee' ? 'Petugas' : Auth::user()->role,
@@ -45,28 +45,55 @@ class OrderController extends Controller
         return $pdf->download('Nota-Pembayaran-' . $order->invoice . '.pdf');
     }
 
-    public function export()
+    public function export(Request $request)
     {
-        return Excel::download(new OrdersExport, 'orders.xlsx');
+        $query = Order::query();
+
+        if ($request->filled('tanggal')) {
+            $query->whereDate('created_at', $request->tanggal);
+        }
+
+        if ($request->filled('bulan')) {
+            $query->whereMonth('created_at', $request->bulan);
+        }
+
+        if ($request->filled('tahun')) {
+            $query->whereYear('created_at', $request->tahun);
+        }
+
+        $orders = $query->get();
+
+        return Excel::download(new OrdersExport($orders), 'filtered-orders.xlsx');
     }
+
 
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 5);
-        $search = $request->input('search', '');
+        $query = Order::query();
 
-        $orders = Order::when($search, function ($query, $search) {
-            if (strtolower(trim($search)) === 'bukan member') {
-                return $query->whereNull('customer_name');
-            } else {
-                return $query->where(function ($q) use ($search) {
-                    $q->where('customer_name', 'like', "%{$search}%")
-                      ->orWhere('phone_number', 'like', "%{$search}%");
-                });
-            }
-        })->paginate($perPage);
+        if ($request->tanggal) {
+            $query->whereDate('created_at', $request->tanggal);
+        }
 
-        return view('order.index', compact('orders'));
+        if ($request->bulan) {
+            $query->whereMonth('created_at', $request->bulan);
+        }
+
+        if ($request->tahun) {
+            $query->whereYear('created_at', $request->tahun);
+        }
+
+        $perPage = $request->get('per_page', 10);
+
+        // Ambil daftar tahun yang ada
+        $years = Order::selectRaw('YEAR(created_at) as year')
+                    ->distinct()
+                    ->orderBy('year', 'desc')
+                    ->pluck('year');
+
+        $orders = $query->latest()->paginate($perPage)->withQueryString();
+
+        return view('order.index', compact('orders', 'years'));
     }
 
     public function summary(Request $request)

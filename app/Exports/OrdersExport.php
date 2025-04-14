@@ -8,21 +8,21 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class OrdersExport implements FromCollection, WithHeadings
 {
-    /**
-    * @return \Illuminate\Support\Collection
-    */
+    protected $orders;
+
+    public function __construct($orders)
+    {
+        $this->orders = $orders;
+    }
+
     public function collection()
     {
-        return Order::all()->map(function ($order) {
+        return $this->orders->map(function ($order) {
             return [
                 'invoice'        => $order->invoice,
-                'customer_name' => $order->customer_name ?? 'Bukan Member',
+                'customer_name'  => $order->customer_name ?? 'Bukan Member',
                 'products'       => collect(json_decode($order->products))->map(function($product) {
-                    return [
-                        $product->name,
-                        $product->quantity,
-                        $product->subtotal,
-                    ];
+                    return [$product->name, $product->quantity, $product->subtotal];
                 })->toArray(),
                 'total'          => $order->total,
                 'phone_number'   => $order->phone_number,
@@ -33,7 +33,6 @@ class OrdersExport implements FromCollection, WithHeadings
             ];
         });
     }
-
 
     public function headings(): array
     {

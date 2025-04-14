@@ -9,7 +9,7 @@
         @endif
 
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-            <form action="{{ route('orders.index') }}" method="GET" class="d-flex align-items-center flex-grow-1 gap-2">
+            <form action="{{ route('orders.index') }}" method="GET" class="d-flex align-items-center flex-wrap gap-2">
                 <label for="per_page" class="mb-0">Tampilkan:</label>
                 <select name="per_page" id="per_page" class="form-select w-auto" onchange="this.form.submit()">
                     <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
@@ -17,14 +17,34 @@
                     <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
                 </select>
 
-                <input type="text" name="search" class="form-control flex-grow-1" placeholder="Cari berdasarkan Nama Pelanggan" value="{{ request('search') }}">
+                <input type="date" name="tanggal" class="form-control w-auto" value="{{ request('tanggal') }}">
 
-                <button type="submit" class="btn btn-primary">Cari</button>
+                <select name="bulan" class="form-select w-auto">
+                    <option value="">-- Bulan --</option>
+                    @foreach (range(1, 12) as $b)
+                        <option value="{{ $b }}" {{ request('bulan') == $b ? 'selected' : '' }}>
+                            {{ \Carbon\Carbon::create()->month($b)->translatedFormat('F') }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <select name="tahun" class="form-select w-auto">
+                    <option value="">-- Tahun --</option>
+                    @foreach ($years as $year)
+                        <option value="{{ $year }}" {{ request('tahun') == $year ? 'selected' : '' }}>
+                            {{ $year }}</option>
+                    @endforeach
+                </select>
+
+                <button type="submit" class="btn btn-primary">Filter</button>
             </form>
 
-            <a class="btn btn-success" href="{{ route('orders.export') }}">
+            <a class="btn btn-success"
+                href="{{ route('orders.export', request()->only(['tanggal', 'bulan', 'tahun', 'per_page'])) }}">
                 <i class="fa fa-download"></i> Export Order Data
             </a>
+
+
 
             @if (Auth::user()->role != 'Admin')
                 <a href="{{ route('orders.create') }}" class="btn btn-primary">
@@ -32,7 +52,6 @@
                 </a>
             @endif
         </div>
-
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -64,13 +83,14 @@
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="orderDetailModalLabel{{ $order->id }}">Detail Order</h5>
+                                            <h5 class="modal-title" id="orderDetailModalLabel{{ $order->id }}">Detail
+                                                Order</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Tutup"></button>
                                         </div>
                                         <div class="modal-body">
                                             @php
-                                                $toko = \App\Models\Toko::first();  // Ambil data toko pertama
+                                                $toko = \App\Models\Toko::first(); // Ambil data toko pertama
                                             @endphp
                                             <p><strong>Nama Toko:</strong> {{ $toko->nama_toko }}</p>
                                             <p><strong>Alamat:</strong> {{ $toko->alamat }}</p>
@@ -78,7 +98,10 @@
                                         </div>
                                         <div class="modal-body">
                                             @php
-                                                $member = \App\Models\Member::where('phone', $order->phone_number)->first();
+                                                $member = \App\Models\Member::where(
+                                                    'phone',
+                                                    $order->phone_number,
+                                                )->first();
                                             @endphp
 
                                             <p><strong>Member Status:</strong>
@@ -87,8 +110,11 @@
 
                                             @if ($member)
                                                 <p><strong>No. HP:</strong> {{ $member->phone }}</p>
-                                                <p><strong>Poin Member:</strong> {{ number_format($member->points, 0, ',', '.') }}</p>
-                                                <p><strong>Bergabung Sejak:</strong> {{ \Carbon\Carbon::parse($member->created_at)->translatedFormat('d F Y') }}</p>
+                                                <p><strong>Poin Member:</strong>
+                                                    {{ number_format($member->points, 0, ',', '.') }}</p>
+                                                <p><strong>Bergabung Sejak:</strong>
+                                                    {{ \Carbon\Carbon::parse($member->created_at)->translatedFormat('d F Y') }}
+                                                </p>
                                             @endif
 
                                             @php $products = json_decode($order->products, true); @endphp
@@ -106,20 +132,24 @@
                                                         <tr>
                                                             <td>{{ $product['name'] }}</td>
                                                             <td>{{ $product['quantity'] }} KG </td>
-                                                            <td>Rp. {{ number_format($product['price'], 0, ',', '.') }}</td>
-                                                            <td>Rp. {{ number_format($product['subtotal'], 0, ',', '.') }}</td>
+                                                            <td>Rp. {{ number_format($product['price'], 0, ',', '.') }}
+                                                            </td>
+                                                            <td>Rp. {{ number_format($product['subtotal'], 0, ',', '.') }}
+                                                            </td>
                                                         </tr>
                                                     @endforeach
                                                 </tbody>
                                             </table>
 
-                                            <p><strong>Total:</strong> Rp. {{ number_format($order->total, 0, ',', '.') }}</p>
-                                            <p><strong>Dibuat pada:</strong> {{ $order->created_at->format('Y-m-d H:i:s') }}</p>
+                                            <p><strong>Total:</strong> Rp. {{ number_format($order->total, 0, ',', '.') }}
+                                            </p>
+                                            <p><strong>Dibuat pada:</strong>
+                                                {{ $order->created_at->format('Y-m-d H:i:s') }}</p>
                                             <p><strong>Oleh:</strong> {{ $order->user_id == 1 ? 'Admin' : 'Petugas' }}</p>
 
                                             <!-- Modal Content - Info Toko -->
                                             @php
-                                                $toko = \App\Models\Toko::first();  // Ambil data toko pertama
+                                                $toko = \App\Models\Toko::first(); // Ambil data toko pertama
                                             @endphp
                                             <div class="modal mt-3">
                                                 <div class="modal-header">
@@ -138,7 +168,8 @@
                                 </div>
                             </div>
 
-                            <a href="{{ route('orders.downloadPDF', $order->id) }}" class="btn btn-secondary btn-sm" target="_blank">
+                            <a href="{{ route('orders.downloadPDF', $order->id) }}" class="btn btn-secondary btn-sm"
+                                target="_blank">
                                 <i class="fa fa-file-pdf"></i> Export PDF
                             </a>
                         </td>

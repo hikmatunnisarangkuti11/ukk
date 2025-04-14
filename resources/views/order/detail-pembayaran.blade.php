@@ -1,7 +1,6 @@
 @extends('layouts.app', ['title' => 'Detail Pembayaran', 'page' => 'detail-pembayaran'])
 
 @section('content')
-
     <div class="receipt">
         <h2>Nota Pembayaran</h2>
         <div class="store-info text-center mb-4">
@@ -18,8 +17,8 @@
         </div>
         <div class="section">
             @if ($paymentDetails['is_member'] === 'member')
-            <p><strong>Member Sejak:</strong> {{ $paymentDetails['member_since'] }}</p>
-            <p><strong>Member Poin:</strong> {{ $paymentDetails['poin_didapat'] }}</p>
+                <p><strong>Member Sejak:</strong> {{ $paymentDetails['member_since'] }}</p>
+                <p><strong>Member Poin:</strong> {{ $paymentDetails['poin_didapat'] }}</p>
             @endif
         </div>
 
@@ -44,14 +43,28 @@
                     @endforeach
                 </tbody>
             </table>
+
+            <div class="total">
+                <div class="d-flex justify-content-between fs-4 ">
+                    <span>Total Pembayaran:</span>
+                    <strong>Rp {{ number_format($paymentDetails['total_pay'], 0, ',', '.') }}</strong>
+                </div>
+                <div class="d-flex justify-content-between fs-4">
+                    <span>Poin Digunakan:</span>
+                    <strong>{{ number_format($paymentDetails['poin_digunakan'], 0, ',', '.') }}</strong>
+                </div>
+                <div class="d-flex justify-content-between fs-4">
+                    <span>Total Harga:</span>
+                    <strong>Rp
+                        {{ number_format($paymentDetails['total_asli'] - $paymentDetails['poin_digunakan'], 0, ',', '.') }}</strong>
+                </div>
+                <div class="d-flex justify-content-between fs-4">
+                    <span>Kembalian:</span>
+                    <strong>Rp {{ number_format($paymentDetails['kembalian'], 0, ',', '.') }}</strong>
+                </div>
+            </div>
         </div>
 
-        <div class="total">
-            <p><strong>Total Pembayaran:</strong> Rp {{ number_format($paymentDetails['total_pay'], 0, ',', '.') }}</p>
-            <p><strong>Poin Digunakan:</strong> {{ number_format($paymentDetails['poin_digunakan'], 0, ',', '.') }}</p>
-            <p><strong>Total Harga:</strong> Rp {{ number_format($paymentDetails['total_asli'] - $paymentDetails['poin_digunakan'], 0, ',', '.') }}</p>
-            <p><strong>Kembalian:</strong> Rp {{ number_format($paymentDetails['kembalian'], 0, ',', '.') }}</p>
-        </div>
 
         <div class="text-center">
             <p>--- Terima Kasih ---</p>
@@ -59,7 +72,8 @@
 
         <div class="btn-container">
             <a href="{{ route('orders.index') }}" class="btn btn-secondary">Kembali</a>
-            <a href="{{ route('orders.downloadPDF', ['id' => $paymentDetails['order']->id]) }}" class="btn btn-primary">Unduh PDF</a>
+            <a href="{{ route('orders.downloadPDF', ['id' => $paymentDetails['order']->id]) }}"
+                class="btn btn-primary">Unduh PDF</a>
         </div>
     </div>
 @endsection
