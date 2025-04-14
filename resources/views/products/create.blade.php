@@ -4,12 +4,12 @@
     <div class="container mt-5">
         <h2 class="mb-4">Tambah Produk</h2>
 
-        <!-- Alert sukses -->
-        <div class="alert alert-success" style="display: none;">
-            Produk berhasil ditambahkan.
-        </div>
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
 
-        <form method="POST" enctype="multipart/form-data">
+        <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
             <div class="mb-3">
                 <label class="form-label">Nama Produk</label>
                 <input type="text" name="name" class="form-control" required>

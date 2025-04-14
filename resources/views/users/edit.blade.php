@@ -2,13 +2,15 @@
 
 @section('content')
 <div class="container mt-5">
-    <h2 class="mb-4">Tambah User</h2>
+    <h2 class="mb-4">Edit Produk</h2>
 
-    <div class="alert alert-success" style="display: none;">
-        User berhasil ditambahkan.
-    </div>
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-    <form action="#" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
         <div class="mb-3">
             <label class="form-label">Email</label>
             <input type="text" name="email" class="form-control" required>
@@ -26,8 +28,9 @@
         </div>
         <div class="mb-3">
             <label class="form-label">Password</label>
-            <input type="text" name="password"  class="form-control">
+            <input type="text" name="password" class="form-control">
         </div>
+
         <button type="submit" class="btn btn-primary">Simpan</button>
     </form>
 </div>

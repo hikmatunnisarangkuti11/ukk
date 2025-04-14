@@ -4,26 +4,29 @@
 <div class="container mt-5">
     <h2 class="mb-4">Edit Produk</h2>
 
-    <!-- Alert sukses -->
-    <div class="alert alert-success" style="display: none;">
-        Produk berhasil diperbarui.
-    </div>
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-    <form method="POST" enctype="multipart/form-data">
+    <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
+
         <div class="mb-3">
             <label class="form-label">Nama Produk</label>
-            <input type="text" name="name" class="form-control" value="Contoh Nama Produk" required>
+            <input type="text" name="name" class="form-control" value="{{ $product->name }}" required>
         </div>
 
         <div class="mb-3">
             <label class="form-label">Harga</label>
-            <input type="number" name="price" class="form-control" value="50000" required>
+            <input type="number" name="price" class="form-control" value="{{ $product->price }}" required>
         </div>
 
         <div class="mb-3">
             <label class="form-label">Stok</label>
-            <input type="number" name="stock" class="form-control" value="20" readonly>
+            <input type="number" name="stock" class="form-control" value="{{ $product->stock }}" readonly>
         </div>
+
 
         <div class="mb-3">
             <label class="form-label">Gambar Produk</label>

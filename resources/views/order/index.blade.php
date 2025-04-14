@@ -6,7 +6,7 @@
     <div class="alert alert-success">Data berhasil disimpan!</div>
 
     <a class="btn btn-success float-end" href="#"><i class="fa fa-download"></i> Export Order Data</a>
-    <a href="#" class="btn btn-primary mb-3">Tambah Pembelian</a>
+    <a href="orders.create" class="btn btn-primary mb-3">Create Order</a>
 
     <table class="table table-bordered">
         <thead>
