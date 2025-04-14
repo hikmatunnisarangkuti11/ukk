@@ -144,9 +144,9 @@ class OrderController extends Controller
         $totalPaid = (int) $request->total_pay_hidden;
         $customerName = $request->customer_name_input;
         $phone = $request->phone;
-
+    
         $member = null;
-
+    
         // Cek apakah pembeli adalah member
         if ($statusMember === 'member') {
             $member = Member::firstOrCreate(
@@ -157,21 +157,21 @@ class OrderController extends Controller
                     'is_member' => 1,
                 ]
             );
-
+    
             // Update nama customer jika berubah
             $member->update(['customer_name' => $customerName]);
         }
-
+    
         $poinDigunakan = (int) $request->poin_digunakan;
         $poinDariPembelian = floor($totalPrice * 0.01);
         $poinTotalDigunakan = 0;
         $totalSetelahPoin = $totalPrice;
-
+    
         // Proses poin jika member
         if ($member) {
             $totalPoinTersedia = $member->points + $poinDariPembelian;
             $poinDigunakan = min($totalPoinTersedia, $poinDigunakan);
-
+    
             if ($poinDigunakan > 0) {
                 $totalSetelahPoin = $totalPrice - $poinDigunakan;
                 $member->decrement('points', min($member->points, $poinDigunakan));
@@ -181,12 +181,12 @@ class OrderController extends Controller
                 $member->increment('points', $poinDariPembelian);
             }
         }
-
-        // Generate invoice
-        $lastInvoiceNumber = Order::max('invoice');
-        $lastInvoiceNumber = (int) filter_var($lastInvoiceNumber, FILTER_SANITIZE_NUMBER_INT);
-        $nextInvoiceNumber = $lastInvoiceNumber + 1;
-
+    
+        // Generate invoice dengan query yang benar
+        $lastInvoiceNumber = Order::selectRaw("MAX(CAST(SUBSTRING(invoice, 2) AS UNSIGNED)) as max_invoice")
+            ->value('max_invoice');
+        $nextInvoiceNumber = $lastInvoiceNumber ? $lastInvoiceNumber + 1 : 1;
+    
         // Simpan order
         $order = Order::create([
             'user_id' => Auth::id(),
@@ -199,7 +199,7 @@ class OrderController extends Controller
             'kembalian' => max(0, $totalPaid - $totalSetelahPoin),
             'poin_digunakan' => $poinTotalDigunakan,
         ]);
-
+    
         // Kurangi stok produk
         foreach ($orderData as $item) {
             $product = Product::find($item['id']);
@@ -207,9 +207,9 @@ class OrderController extends Controller
                 $product->decrement('stock', (int) $item['quantity']);
             }
         }
-
+    
         $toko = Toko::first();
-
+    
         return view('order.detail-pembayaran', [
             'paymentDetails' => [
                 'order' => $order,
